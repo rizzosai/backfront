@@ -1,3 +1,23 @@
+
+import os
+from flask import Flask, request, jsonify, redirect, send_from_directory
+import requests
+from dotenv import load_dotenv
+from flask_cors import CORS
+import requests
+
+print("Render public IP:", requests.get('https://api.ipify.org').text)
+
+load_dotenv()
+
+# Initialize Flask app and enable CORS
+app = Flask(__name__)
+CORS(app)
+# Redirect root URL to the main back office
+@app.route('/guides/download/cheap-traffic')
+def download_cheap_traffic_guide():
+    return send_from_directory('static/guides', 'cheap_traffic_guide.html', as_attachment=True)
+# Route to get the public IP address of the backend server
 @app.route('/api/my-ip', methods=['GET'])
 def get_my_ip():
     try:
@@ -8,22 +28,21 @@ def get_my_ip():
         return jsonify({'error': str(e)}), 500
 
 import os
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, jsonify, redirect, send_from_directory
 import requests
 from dotenv import load_dotenv
 from flask_cors import CORS
-import requests
 
 print("Render public IP:", requests.get('https://api.ipify.org').text)
 
 load_dotenv()
 
 app = Flask(__name__)
-# Redirect root URL to the main back office
-@app.route('/')
-def root():
-    return redirect('https://backoffice21.onrender.com/', code=302)
-CORS(app)  # Allow all origins by default; restrict in production if needed
+
+# Downloadable cheap traffic guide
+@app.route('/guides/download/cheap-traffic')
+def download_cheap_traffic_guide():
+    return send_from_directory('static/guides', 'cheap_traffic_guide.html', as_attachment=True)
 
 # Route to get the public IP address of the backend server
 @app.route('/api/my-ip', methods=['GET'])
@@ -34,6 +53,7 @@ def get_my_ip():
         return jsonify(ip_response.json()), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 NAMECHEAP_API_USER = os.getenv('NAMECHEAP_API_USER')
 NAMECHEAP_API_KEY = os.getenv('NAMECHEAP_API_KEY')
@@ -70,5 +90,9 @@ def claim_domain():
     # For demo, just return success
     return jsonify({'success': True, 'message': 'Domain is available and can be registered.'})
 
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+
